@@ -1,0 +1,6 @@
+setup.py
+fitform.egg-info/PKG-INFO
+fitform.egg-info/SOURCES.txt
+fitform.egg-info/dependency_links.txt
+fitform.egg-info/requires.txt
+fitform.egg-info/top_level.txt
