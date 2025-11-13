@@ -489,6 +489,19 @@ def too_large(e):
 def internal_error(e):
     return jsonify({'success': False, 'error': 'Internal server error'}), 500
 
+@app.errorhandler(Exception)
+def handle_exception(e):
+    """Catch-all error handler to ensure all errors return JSON"""
+    # Log the error
+    print(f"❌ Unhandled exception: {str(e)}")
+    traceback.print_exc()
+    
+    # Return JSON error response
+    return jsonify({
+        'success': False, 
+        'error': f'Server error: {str(e)}'
+    }), 500
+
 if __name__ == '__main__':
     print("🚀 Starting SquatForm Pro with Enhanced Model Management...")
     print(f"📁 Upload folder: {app.config['UPLOAD_FOLDER']}")
