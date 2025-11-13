@@ -19,11 +19,18 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
 
   try {
     // Send video to Flask backend
-    const analyzeResponse = await fetch("http://127.0.0.1:5000/analyze", {
-      method: "POST",
+        const analyzeResponse = await fetch("/analyze", {      method: "POST",
       body: formData,
     });
 
+
+        // Check if response is JSON before parsing
+        const contentType = analyzeResponse.headers.get("content-type");
+        if (!analyzeResponse.ok || !contentType || !contentType.includes("application/json")) {
+            const errorText = await analyzeResponse.text();
+            resultDiv.innerHTML = `❌ Upload failed: ${errorText.substring(0, 200)}`;
+            return;
+        }
     const analyzeData = await analyzeResponse.json();
 
     if (analyzeData.error) {
