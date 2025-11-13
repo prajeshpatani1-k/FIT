@@ -8,6 +8,14 @@ document.getElementById("uploadForm").addEventListener("submit", async (e) => {
     alert("Please select a video file first!");
     return;
   }
+  
+    // Check file size (4MB limit for Vercel serverless)
+    const maxSize = 4 * 1024 * 1024; // 4MB in bytes
+    if (file.size > maxSize) {
+        const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        alert(`File too large: ${fileSizeMB}MB. Maximum size is 4MB.\nPlease compress your video or use a shorter clip.`);
+        return;
+    }
 
   // Show loading message
   const resultDiv = document.getElementById("result");
