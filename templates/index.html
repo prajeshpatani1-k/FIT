@@ -846,26 +846,40 @@
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
-            .then(data => {
-                loadingElement.style.display = 'none';
-                fileInfoElement.style.display = 'block';
-                
-                if (data.success) {
-                    displayResults(data);
-                    // Save to history
-                    saveToHistory(data);
-                    // Update dashboard
-                    updateDashboard(data);
-                } else {
-                    showError(data.error);
+.then(async response => {
+            // Check if response is OK first
+            if (!response.ok) {
+                // Try to get error message
+                const text = await response.text();
+                try {
+                    const errorData = JSON.parse(text);
+                    throw new Error(errorData.error || 'Analysis failed');
+                } catch {
+                    throw new Error(`Server error: ${text.substring(0, 100)}`);
                 }
-            })
-            .catch(error => {
-                loadingElement.style.display = 'none';
-                fileInfoElement.style.display = 'block';
-                showError(error.message);
-            });
+            }
+            // Parse JSON only if response is OK
+            return response.json();
+        })
+        .then(data => {
+            loadingElement.style.display = 'none';
+            fileInfoElement.style.display = 'block';
+            
+            if (data.success) {
+                displayResults(data);
+                // Save to history
+                saveToHistory(data);
+                // Update dashboard
+                updateDashboard(data);
+            } else {
+                showError(data.error);
+            }
+        })
+        .catch(error => {
+            loadingElement.style.display = 'none';
+            fileInfoElement.style.display = 'block';
+            showError(error.message || 'Network error occurred');
+        });
         }
 
         function displayResults(data) {
