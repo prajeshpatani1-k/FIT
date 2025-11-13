@@ -589,7 +589,7 @@
                             <h3 style="color: var(--dark); margin-bottom: 15px;">Upload Your Squat Video</h3>
                             <p style="color: var(--gray);">Drop your video here or click to browse</p>
                             <p style="color: var(--gray); font-size: 0.9em; margin-top: 10px;">
-                                <i class="fas fa-video"></i> Supports MP4, AVI, MOV - Max 4MB
+                                <i class="fas fa-video"></i> Supports MP4, AVI, MOV - Max 50MB
                             </p>
                         </div>
 
@@ -816,9 +816,9 @@
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (file) {
-                        // Check file size limit (4 MB)
-        if (file.size > 4 * 1024 * 1024) {
-            alert('⚠️ Video file is too large!\n\nMaximum file size is 4 MB.\n\nPlease compress your video or upload a shorter clip.');
+                        // Check file size limit (50 MB)
+        if (file.size > 50 * 1024 * 1024) {
+            alert('⚠️ Video file is too large!\n\nMaximum file size is 50 MB.\n\nPlease compress your video or upload a shorter clip.');
             event.target.value = '';
             return;
         }
