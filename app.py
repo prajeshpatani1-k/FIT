@@ -13,11 +13,14 @@ from datetime import datetime, timedelta
 load_dotenv()
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB max file size
 
 # Create uploads directory if it doesn't exist
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+try:
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+except Exception:
+    pass  # In serverless environment, /tmp might not allow makedirs
 
 # Allowed file extensions
 ALLOWED_EXTENSIONS = {'mp4', 'avi', 'mov', 'mkv'}
