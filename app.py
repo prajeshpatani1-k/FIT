@@ -8,6 +8,7 @@ import traceback
 import sys
 import random
 from datetime import datetime, timedelta
+import requests
 
 # Load environment variables
 load_dotenv()
@@ -390,6 +391,41 @@ def api_status():
     """🆕 API status endpoint to check model availability"""
     status = model_manager.get_model_status()
     return jsonify(status)
+
+
+@app.route('/upload-url', methods=['POST'])
+def get_upload_url():
+    """Generate a presigned URL for direct blob upload"""
+    try:
+        data = request.get_json()
+        filename = data.get('filename', 'video.mp4')
+        
+        # Get Vercel Blob token from environment
+        blob_token = os.getenv('BLOB_READ_WRITE_TOKEN')
+        if not blob_token:
+            return jsonify({'success': False, 'error': 'Blob storage not configured'}), 500
+        
+        # Request upload URL from Vercel Blob API
+        response = requests.post(
+            'https://blob.vercel-storage.com/upload',
+            headers={'Authorization': f'Bearer {blob_token}'},
+            json={'filename': filename, 'contentType': 'video/mp4'}
+        )
+        
+        if response.status_code == 200:
+            blob_data = response.json()
+            return jsonify({
+                'success': True,
+                'uploadUrl': blob_data['url'],
+                'blobUrl': blob_data['url'].split('?')[0]
+            })
+        else:
+            return jsonify({'success': False, 'error': 'Failed to get upload URL'}), 500
+            
+    except Exception as e:
+        print(f"❌ Upload URL error: {e}")
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/analyze', methods=['POST'])
 def analyze_video():
